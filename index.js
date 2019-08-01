@@ -3,7 +3,7 @@
 //const ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const ACCESS_TOKEN = "test";
 //const VERIFY_TOKEN = process.env.VERIFICATION_TOKEN;
-const VERIFY_TOKEN = "test";
+const VERIFY_TOKEN = 'test';
 
 var logger = require('morgan');
 var http = require('http');

@@ -1,10 +1,5 @@
 // # SimpleServer
 // A simple chat bot server
-//const ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-//const ACCESS_TOKEN = "test";
-//const VERIFY_TOKEN = process.env.VERIFICATION_TOKEN;
-//const VERIFY_TOKEN = 'test';
-
 var logger = require('morgan');
 var http = require('http');
 var bodyParser = require('body-parser');
@@ -20,10 +15,10 @@ app.use(bodyParser.urlencoded({
 var server = http.createServer(app);
 app.listen(process.env.PORT || 3000);
 app.get('/', (req, res) => {
-    res.send("Server okay!");
+    res.send("Server chạy ngon lành.");
 });
 app.get('/webhook', function (req, res) {
-    if (req.query['hub.verify_token'] === 'test') {
+    if (req.query['hub.verify_token'] === 'quandeptrai') {
         res.send(req.query['hub.challenge']);
     }
     res.send('Error, wrong validation token');
@@ -39,10 +34,10 @@ app.post('/webhook', function (req, res) {
                 // Nếu người dùng gửi tin nhắn đến
                 if (message.message.text) {
                     var text = message.message.text;
-                    if (text == "chatbot") {
-                        sendMessage(senderId, "Chào bạn, đây là chức năng chatbot (betatest) của nhóm BKUFC-THPT Đức Hòa.");
+                    if (text == 'hi' || text == "hello") {
+                        sendMessage(senderId, "Trung Quân's Bot: " + 'Xin Chào');
                     } else {
-
+                        sendMessage(senderId, "Trung Quân's Bot: " + "Xin lỗi, câu hỏi của bạn chưa có trong hệ thống, chúng tôi sẽ cập nhật sớm nhất.");
                     }
                 }
             }
@@ -55,7 +50,7 @@ function sendMessage(senderId, message) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
-            access_token: "test",
+            access_token: "mã_truy_cập_trang",
         },
         method: 'POST',
         json: {

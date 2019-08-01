@@ -57,6 +57,28 @@ app.post('/webhook', function (req, res) {
     }
     res.status(200).send("OK");
 });
+
+// Handles messages events
+const handleMessage = (sender_psid, received_message) => {
+    let response;
+
+    if (received_message.text) {
+
+    }
+}
+
+// 
+const handlePostback = (sender_psid, received_postback) => {
+    let response;
+
+    // Get the payload for the postback
+    let payload = received_postback.payload;
+
+    if (payload === 'GET_STARTED') {
+
+    }
+}
+
 // Gửi thông tin tới REST API để Bot tự trả lời
 function sendMessage(senderId, message) {
     request({

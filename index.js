@@ -1,9 +1,9 @@
 // # SimpleServer
 // A simple chat bot server
 //const ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-const ACCESS_TOKEN = "test";
+//const ACCESS_TOKEN = "test";
 //const VERIFY_TOKEN = process.env.VERIFICATION_TOKEN;
-const VERIFY_TOKEN = 'test';
+//const VERIFY_TOKEN = 'test';
 
 var logger = require('morgan');
 var http = require('http');
@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
     res.send("Server okay!");
 });
 app.get('/webhook', function (req, res) {
-    if (req.query['hub.verify_token'] === VERIFY_TOKEN) {
+    if (req.query['hub.verify_token'] === 'test') {
         res.send(req.query['hub.challenge']);
     }
     res.send('Error, wrong validation token');
@@ -55,7 +55,7 @@ function sendMessage(senderId, message) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
-            access_token: ACCESS_TOKEN,
+            access_token: "test",
         },
         method: 'POST',
         json: {

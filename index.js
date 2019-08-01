@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
     res.send("Server okay!");
 });
 app.get('/webhook', function (req, res) {
-    if (req.query['hub.verify_token'] === VERIFY_TOKEN) {
+    if (req.query['hub.verify_token'] === process.env.VERIFY_TOKEN) {
         res.send(req.query['hub.challenge']);
     }
     res.send('Error, wrong validation token');
@@ -53,7 +53,7 @@ function sendMessage(senderId, message) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
-            access_token: PAGE_ACCESS_TOKEN,
+            access_token: process.env.PAGE_ACCESS_TOKEN,
         },
         method: 'POST',
         json: {

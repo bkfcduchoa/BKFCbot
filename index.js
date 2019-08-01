@@ -1,5 +1,8 @@
 // # SimpleServer
 // A simple chat bot server
+const ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+const VERIFY_TOKEN = process.env.VERIFICATION_TOKEN;
+
 var logger = require('morgan');
 var http = require('http');
 var bodyParser = require('body-parser');
@@ -15,10 +18,10 @@ app.use(bodyParser.urlencoded({
 var server = http.createServer(app);
 app.listen(process.env.PORT || 3000);
 app.get('/', (req, res) => {
-    res.send("Server chạy ngon lành.");
+    res.send("Server okay!");
 });
 app.get('/webhook', function (req, res) {
-    if (req.query['hub.verify_token'] === 'quandeptrai') {
+    if (req.query['hub.verify_token'] === VERIFY_TOKEN) {
         res.send(req.query['hub.challenge']);
     }
     res.send('Error, wrong validation token');
@@ -34,10 +37,10 @@ app.post('/webhook', function (req, res) {
                 // Nếu người dùng gửi tin nhắn đến
                 if (message.message.text) {
                     var text = message.message.text;
-                    if (text == 'hi' || text == "hello") {
-                        sendMessage(senderId, "Trung Quân's Bot: " + 'Xin Chào');
+                    if (text == "chatbot") {
+                        sendMessage(senderId, "Chào bạn, đây là chức năng chatbot (betatest) của nhóm BKUFC-THPT Đức Hòa.");
                     } else {
-                        sendMessage(senderId, "Trung Quân's Bot: " + "Xin lỗi, câu hỏi của bạn chưa có trong hệ thống, chúng tôi sẽ cập nhật sớm nhất.");
+
                     }
                 }
             }
@@ -50,7 +53,7 @@ function sendMessage(senderId, message) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
-            access_token: "mã_truy_cập_trang",
+            access_token: ACCESS_TOKEN,
         },
         method: 'POST',
         json: {

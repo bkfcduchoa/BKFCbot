@@ -1,99 +1,244 @@
-// # SimpleServer
-// A simple chat bot server
-const ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-const VERIFY_TOKEN = process.env.VERIFICATION_TOKEN;
+'use strict';
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+const
+  request = require('request'),
+  express = require('express'),
+  body_parser = require('body-parser'),
+  app = express().use(body_parser.json());
 
-var logger = require('morgan');
-var http = require('http');
-var bodyParser = require('body-parser');
-var express = require('express');
-var request = require('request');
+app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
-var router = express();
-var app = express();
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
-var server = http.createServer(app);
-app.listen(process.env.PORT || 5000);
+app.post('/webhook', (req, res) => {
 
-app.get("/", function (req, res) {
-    res.send("Deployed!");
-});
+  let body = req.body;
 
-app.get('/webhook', function (req, res) {
-    if (req.query['hub.verify_token'] === VERIFY_TOKEN) {
-        res.send(req.query['hub.challenge']);
-        console.log("Verified webhook");
-        res.status(200).send(req.query["hub.challenge"]);
-    } else {
-        res.send('Error, wrong validation token');
-        console.error("Verification failed. The tokens do not match.");
-        res.sendStatus(403);
-    }
-});
+  if (body.object === 'page') {
 
-// Đoạn code xử lý khi có người nhắn tin cho bot
-app.post('/webhook', function (req, res) {
-    var entries = req.body.entry;
-    for (var entry of entries) {
-        var messaging = entry.messaging;
-        for (var message of messaging) {
-            var senderId = message.sender.id;
-            if (message.message) {
-                // Nếu người dùng gửi tin nhắn đến
-                if (message.message.text) {
-                    var text = message.message.text;
-                    if (text == "chatbot") {
-                        sendMessage(senderId, "Chào bạn, đây là chức năng chatbot (betatest) của nhóm BKUFC-THPT Đức Hòa.");
-                    } else {
+    body.entry.forEach(function (entry) {
 
-                    }
-                }
-            }
-        }
-    }
-    res.status(200).send("OK");
-});
+      let webhook_event = entry.messaging[0];
+      console.log(webhook_event);
 
-// Handles messages events
-const handleMessage = (sender_psid, received_message) => {
-    let response;
 
-    if (received_message.text) {
+      let sender_psid = webhook_event.sender.id;
+      console.log('Sender ID: ' + sender_psid);
 
-    }
-}
+      if (webhook_event.message) {
+        handleMessage(sender_psid, webhook_event.message);
+      } else if (webhook_event.postback) {
 
-// 
-const handlePostback = (sender_psid, received_postback) => {
-    let response;
+        handlePostback(sender_psid, webhook_event.postback);
+      }
 
-    // Get the payload for the postback
-    let payload = received_postback.payload;
-
-    if (payload === 'GET_STARTED') {
-
-    }
-}
-
-// Gửi thông tin tới REST API để Bot tự trả lời
-function sendMessage(senderId, message) {
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {
-            access_token: ACCESS_TOKEN,
-        },
-        method: 'POST',
-        json: {
-            recipient: {
-                id: senderId
-            },
-            message: {
-                text: message
-            },
-        }
     });
+    res.status(200).send('EVENT_RECEIVED');
+
+  } else {
+    res.sendStatus(404);
+  }
+
+});
+
+app.get('/webhook', (req, res) => {
+
+  let mode = req.query['hub.mode'];
+  let token = req.query['hub.verify_token'];
+  let challenge = req.query['hub.challenge'];
+
+  if (mode && token) {
+
+    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+
+      console.log('WEBHOOK_VERIFIED');
+      res.status(200).send(challenge);
+
+    } else {
+      res.sendStatus(403);
+    }
+  }
+});
+
+function handleMessage(sender_psid, received_message) {
+  let response;
+
+  if (received_message.text) {
+    response = {
+      "text": `Bạn đã gửi: "${received_message.text}" cho chúng tôi. Hiện tại chatbot đang được phát triển, chưa có chức năng phản hồi!`
+    };
+  }
+  callSendAPI(sender_psid, response);
 }
+
+function handlePostback(sender_psid, received_postback) {
+  console.log('ok');
+  let response;
+  let payload = received_postback.payload;
+  if (payload === 'ViNiX') {
+    response = {
+      "attachment": {
+        "type": "template",
+        "payload": {
+          "template_type": "generic",
+          "elements": [{
+            "title": "Chọn chức năng",
+            "subtitle": "Chọn một chức năng để bot trả lời cho bạn",
+            "buttons": [{
+                "type": "postback",
+                "title": "Thông tin về kỳ thi THPT Quốc gia",
+                "payload": "info_thptqg"
+              },
+              {
+                "type": "postback",
+                "title": "Thông tin về kỳ thi Đánh giá năng lực",
+                "payload": "info_dgnl"
+              },
+              {
+                "type": "postback",
+                "title": "Thông tin về ViNiX bot",
+                "payload": "info_vinix"
+              }
+            ],
+          }]
+        }
+      }
+    };
+  } else if (payload === 'info_thptqg') {
+    response = {
+      "attachment": {
+        "type": "template",
+        "payload": {
+          "template_type": "button",
+          "text": "Thông tin về kỳ thi THPT Quốc gia được chúng mình tổng hợp ở link sau:",
+          "buttons": [{
+            "type": "web_url",
+            "url": "https://www.messenger.com/",
+            "title": "THPTQG",
+            "webview_height_ratio": "full"
+          }]
+        }
+      }
+    };
+  } else if (payload === 'info_dgnl') {
+    response = {
+      "attachment": {
+        "type": "template",
+        "payload": {
+          "template_type": "button",
+          "text": "Thông tin về kỳ thi Đánh giá năng lực được chúng mình tổng hợp ở link sau:",
+          "buttons": [{
+            "type": "web_url",
+            "url": "https://www.messenger.com/",
+            "title": "Đánh giá năng lực",
+            "webview_height_ratio": "full"
+          }]
+        }
+      }
+    };
+  } else if (payload === 'info_vinix') {
+    response = {
+      "attachment": {
+        "type": "template",
+        "payload": {
+          "template_type": "button",
+          "text": "ViNiX được phát triển bởi nhóm BKUFC-THPT Đức Hòa, tham khảo thêm tại link sau:",
+          "buttons": [{
+            "type": "web_url",
+            "url": "https://github.com/tien99",
+            "title": "GitHub",
+            "webview_height_ratio": "full"
+          }]
+        }
+      }
+    }
+  }
+  callSendAPI(sender_psid, response);
+}
+
+function callSendAPI(sender_psid, response) {
+  let request_body = {
+    "recipient": {
+      "id": sender_psid
+    },
+    "message": response
+  }
+
+  request({
+    "uri": "https://graph.facebook.com/v2.6/me/messages",
+    "qs": {
+      "access_token": PAGE_ACCESS_TOKEN
+    },
+    "method": "POST",
+    "json": request_body
+  }, (err, res, body) => {
+    if (!err) {
+      console.log('message sent!');
+    } else {
+      console.error("Unable to send message:" + err);
+    }
+  });
+}
+
+function menu() {
+  console.log('menu');
+  request({
+    "uri": "https://graph.facebook.com/v3.2/me/messenger_profile",
+    "qs": {
+      "access_token": PAGE_ACCESS_TOKEN
+    },
+    "method": "POST",
+    "json": {
+      "persistent_menu": [{
+        "locale": "default",
+        "composer_input_disabled": false,
+        "call_to_actions": [{
+            "type": "postback",
+            "title": "Kỳ thi THPT Quốc gia",
+            "payload": "info_thptqg"
+          },
+          {
+            "type": "postback",
+            "title": "Kỳ thi Đánh giá năng lực",
+            "payload": "info_dgnl"
+          },
+          {
+            "type": "postback",
+            "title": "Thông tin về ViNiX bot",
+            "payload": "info_vinix"
+          }
+        ]
+      }]
+    }
+  }, (err, res, body) => {
+    if (!err) {
+      console.log('message sent!');
+    } else {
+      console.error("Unable to send message:" + err);
+    }
+  });
+}
+
+function start() {
+  console.log('start');
+  request({
+    "uri": "https://graph.facebook.com/v3.2/me/messenger_profile",
+    "qs": {
+      "access_token": PAGE_ACCESS_TOKEN
+    },
+    "method": "POST",
+    "json": {
+      "get_started": {
+        "payload": "ViNiX"
+      }
+    }
+  }, (err, res, body) => {
+    if (!err) {
+      console.log('message sent!');
+    } else {
+      console.error("Unable to send message:" + err);
+    }
+  });
+}
+
+start();
+menu();

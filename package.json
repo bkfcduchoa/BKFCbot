@@ -1,7 +1,7 @@
 {
   "name": "bkfcbot",
   "version": "1.0.0",
-  "description": "",
+  "description": "**Tham khảo:** 1. https://trungquandev.com/huong-dan-build-mot-con-facebook-messenger-bot-bang-nodejs-va-deploy-len-heroku/ 2. https://medium.com/@viviancpy/part-1-facebook-chatbot-with-heroku-webhook-b14090a136c7 3. https://www.sitepoint.com/building-facebook-chat-bot-node-heroku/",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,5 +13,13 @@
     "express": "^4.17.1",
     "request": "^2.88.2"
   },
-  "repository": "https://github.com/tien99/BKFCbot.git"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tien99/BKFCbot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tien99/BKFCbot/issues"
+  },
+  "homepage": "https://github.com/tien99/BKFCbot#readme",
+  "devDependencies": {}
 }

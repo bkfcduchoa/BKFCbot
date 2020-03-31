@@ -6,11 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "MiTiX",
   "license": "ISC",
   "dependencies": {
     "Math": "^0.0.1-security",
     "express": "^4.17.1",
     "request": "^2.88.2"
-  }
+  },
+  "repository": "https://github.com/tien99/BKFCbot.git"
 }

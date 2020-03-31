@@ -1,26 +1,16 @@
 {
-  "name": "chatbot-betatest",
+  "name": "bkfcbot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tienthieusac/chatbot-betatest.git"
-  },
-  "author": "BKUFC-THPTDucHoa Team",
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tienthieusac/chatbot-betatest/issues"
-  },
-  "homepage": "https://github.com/tienthieusac/chatbot-betatest#readme",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "Math": "^0.0.1-security",
     "express": "^4.17.1",
-    "morgan": "^1.9.1",
-    "request": "^2.88.0"
+    "request": "^2.88.2"
   }
 }
